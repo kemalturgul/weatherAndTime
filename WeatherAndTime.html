@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Invisible Tech Task</title>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	</head>
+	<body>
+		<script type="text/javascript">
+			
+			let locationsAndPostalCodes = [{"name":"London","code":"200"},
+											{"name":"Paris","code":"567"},
+											{"name":"Istanbul","code":"890"}];
+
+			let weatherDataJson = '{"coord":{"lon":-0.13,"lat":51.51},"weather":[{"id":300,"main":"Drizzle","description":"light intensity drizzle","icon":"09d"}],"base":"stations","main":{"temp":280.32,"pressure":1012,"humidity":81,"temp_min":279.15,"temp_max":281.15},"visibility":10000,"wind":{"speed":4.1,"deg":80},"clouds":{"all":90},"dt":1485789600,"sys":{"type":1,"id":5091,"message":0.0103,"country":"GB","sunrise":1485762037,"sunset":1485794875},"id":2643743,"name":"London","cod":200}';
+
+			let timeDataJson = '{"week_number":"10","utc_offset":"+00:00","unixtime":"1551913302","timezone":"Europe/London","dst_until":null,"dst_from":null,"dst":false,"day_of_year":65,"day_of_week":3,"datetime":"2019-03-06T23:01:42.044059+00:00","abbreviation":"GMT"}';
+
+			//console.log(getWeather (weatherData));
+			//console.log(getTime(timeData));
+
+			for (let i = 0; i < locationsAndPostalCodes.length; i++) {
+				let weather = getWeather(locationsAndPostalCodes[i].name);
+				let time = getTime(locationsAndPostalCodes[i].name);
+				let weatherAndTime="Weather at "+locationsAndPostalCodes[i].name +":"+ weather + " and Datetime:" + time ;
+
+				console.log(weatherAndTime);
+			}
+
+			function getWeather(locationName){
+
+				let weatherApiURL = "https://samples.openweathermap.org/data/2.5/weather?q="+locationName+"&appid=b6907d289e10d714a6e88b30761fae22";
+
+				$.ajax({
+					  url: weatherApiURL,
+					  type: "GET",
+					  headers: {
+					    "accept": "application/json",
+					    "content-type": "application/x-www-form-urlencoded"
+					  },
+					  success: function (data) {
+						       return getWeatherMain(data);
+					  },
+					  error: function (request, status, error) {
+						     return request.responseText;
+					  }
+
+				});
+			}
+
+			function getTime(locationName){
+
+				let timeApiURL = "http://worldtimeapi.org/api/timezone/Europe/"+locationName;
+
+				$.ajax({
+					  url: timeApiURL,
+					  type: "GET",
+					  headers: {
+					    "accept": "application/json",
+					    "content-type": "application/x-www-form-urlencoded"
+					  },
+					  success: function (data) {
+						       return getDateTime(data);
+					  },
+					  error: function (request, status, error) {
+						     return request.responseText;
+					  }
+
+				});
+			}
+
+			function getWeatherMain(jsonData){
+				parsedWeatherData = JSON.parse(jsonData);
+				return parsedWeatherData.weather[0].main;
+			}
+
+			function getDateTime(jsonData){
+				parsedTimeData = JSON.parse(jsonData);
+				return parsedTimeData.datetime;
+			}
+
+		</script>		
+
+	</body>
+
+
+</html>
+	
